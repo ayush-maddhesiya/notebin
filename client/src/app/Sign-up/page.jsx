@@ -1,9 +1,9 @@
-import Login from '@/shared/Login'
+import Signup from '@/shared/Signup'
 import React from 'react'
 
 const page = () => {
   return (
-    <Login/>
+    <Signup/>
   )
 }
 

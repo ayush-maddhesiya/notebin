@@ -24,7 +24,15 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-    }
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true
+      },
+      googleToken: {
+        type: String
+      }
     },{timestamps});
 
   userSchema.pre('save', async function(next) {  

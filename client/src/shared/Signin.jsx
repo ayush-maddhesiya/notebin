@@ -4,7 +4,7 @@ import React from 'react';
 
 const Signin = () => {
   const handleGoogleSignIn = () => {
-    // Add Google sign-in logic here
+   window.location.href = 'http://localhost:3000/auth/google';
   };
 
   return (

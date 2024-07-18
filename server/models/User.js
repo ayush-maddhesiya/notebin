@@ -23,7 +23,8 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: function(){return !this.googleId},
+
     },
     googleId: {
         type: String,
@@ -33,13 +34,13 @@ const userSchema = new mongoose.Schema({
       googleToken: {
         type: String
       }
-    },{timestamps});
+    },{timestamps:true});
 
   userSchema.pre('save', async function(next) {  
     if(!this.isModified('password')) return next();
 
     try{
-        const salt = await bcrypt.gensalt(10);
+        const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
         next();
     }catch(error){

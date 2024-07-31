@@ -1,10 +1,13 @@
+
 const mongoose = require('mongoose');
 
 const fileSchema = new mongoose.Schema({
-  filename: String,
-  fileUrl: String,
+  filename: { type: String, required: true },
+  fileUrl: { type: String, required: true },
+  title: { type: String, required: true },
+  subject: { type: String, required: true },
+  semester: { type: String, required: true },
+  keyword: { type: String, required: true },
 });
 
-const File = mongoose.model('File', fileSchema);
-
-module.exports = File;
+module.exports = mongoose.model('File', fileSchema);

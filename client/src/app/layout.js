@@ -1,4 +1,7 @@
+"use client"
 import "./global.css";
+import { Provider } from "react-redux";
+import store from "../store";
 
 export default function RootLayout({ children }) {
   return (
@@ -7,7 +10,7 @@ export default function RootLayout({ children }) {
         <title>notebin</title>
       </head>
       <body>
-          {children}
+        <Provider store={store}>{children}</Provider>
       </body>
     </html>
   );

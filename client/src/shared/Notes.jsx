@@ -11,6 +11,8 @@ import {
   PlusIcon,
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
+import Link from "next/link";
+
 
 const sortOptions = [
   { name: "Most Popular", href: "#", current: true },
@@ -71,6 +73,11 @@ function classNames(...classes) {
 }
 
 const Notes = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleAccordion = () => {
+    setIsOpen(!isOpen);
+  };
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   return (
     <>
@@ -339,22 +346,29 @@ const Notes = () => {
 
                     {/* Product grid */}
                     <div className="lg:col-span-3 px-5 flex flex-wrap gap-10">
-                      <div className="w-[25%] h-[50vh] bg-white flex flex-col text-black border border-[#093A3E] p-2 rounded">
-                        <div className="w-full h-[40vh] border mt-2 flex justify-center items-center overflow-hidden">
+                      <div className="w-[15%] h-[40vh] bg-white flex flex-col text-black border border-[#093A3E] p-2 rounded">
+                        <div className="w-full h-[15vh] border mt-2 flex justify-center items-center overflow-hidden">
                           <img
                             className="object-cover h-full w-full"
                             src="https://miro.medium.com/v2/resize:fit:900/0*fMx1Xr3FSPVfTLbT"
                           />
                         </div>
-                        <a
+                        <Link
                           href=""
-                          className="mainf text-xl font-semibold mt-2 leading-0"
+                          className="mainf text-xs font-semibold mt-2 leading-0"
                         >
                           Java Notes 2nd Year
-                        </a>
-                        <p className="text-zinc-600">
+                        </Link>
+                        <p className="text-zinc-600 text-sm leading-[0.8rem]">
+                          <small>Mandeep Yadav</small>
+                        </p>
+                        <p className="text-zinc-600 text-xs leading-[0.8rem]">
+                          <small>23100BTCSICS14454</small>
+                        </p>
+                        <p className="text-zinc-600 text-xs leading-[0.8rem]">
                           <small>12 April 2024</small>
                         </p>
+                      <Link href="" className="text-center block mt-2 rounded bg-[#093A3E] text-white text-xs">Download</Link>
                       </div>
                     </div>
                   </div>

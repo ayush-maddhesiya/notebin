@@ -1,59 +1,57 @@
-const B2 = require('backblaze-b2');
-const mongoose = require('mongoose');
-const File = require('../models/fileModel');
-const multer = require('multer');
-require('dotenv').config();
+const cloudinary = require("../lib/cloudinaryConfig");
+const File = require("../models/fileModel");
+const TryCatch = require("../middlewares/errorHandler.js");
 
-const b2 = new B2({
-  applicationKeyId: process.env.B2_KEY_ID,
-  applicationKey: process.env.B2_APPLICATION_KEY,
+// Upload Files
+const uploadFile = TryCatch(async (req, res) => {
+  const result = await cloudinary.uploader.upload_stream(
+    { resource_type: "raw" },
+    (error, result) => {
+      if (error) {
+        console.error("Error uploading file to Cloudinary:", error);
+        return res.status(500).json({ message: "File upload failed", error });
+      }
+
+      const newFile = new File({
+        filename: req.file.originalname,
+        fileUrl: result.secure_url,
+        title: req.body.title,
+        subject: req.body.subject,
+        semester: req.body.semester,
+        keyword: req.body.keyword,
+        user: req.user._id,
+      });
+
+      newFile.save();
+
+      res
+        .status(200)
+        .json({
+          message: "File uploaded successfully",
+          fileUrl: result.secure_url,
+        });
+    }
+  );
+
+  result.end(req.file.buffer);
 });
 
-const uploadFile = async (req, res) => {
-  try {
-    await b2.authorize(); // Authorize with B2
-    const uploadUrlResponse = await b2.getUploadUrl({
-      bucketId: process.env.BUCKET_ID,
-    });
+// Get files
+const getFiles = TryCatch(async (req, res) => {
+  const files = await File.find().populate(
+    "user",
+    "userId name enrollmentNo semester"
+  );
+  res.status(200).json(files);
+});
 
-    const uploadResponse = await b2.uploadFile({
-      uploadUrl: uploadUrlResponse.data.uploadUrl,
-      uploadAuthToken: uploadUrlResponse.data.authorizationToken,
-      fileName: `${Date.now()}_${req.file.originalname}`,
-      data: req.file.buffer,
-    });
+// Get files uploaded by the logged-in user
+const getUserFiles = TryCatch(async (req, res) => {
+  const userFiles = await File.find({ user: req.user._id }).populate(
+    "user",
+    "userId name enrollmentNo semester"
+  );
+  res.status(200).json(userFiles);
+});
 
-    const fileUrl = `https://f000.backblazeb2.com/file/${process.env.BUCKET_ID}/${uploadResponse.data.fileName}`;
-
-    // Save metadata in MongoDB
-    const newFile = new File({
-      filename: req.file.originalname,
-      fileUrl,
-      title: req.body.title,
-      subject: req.body.subject,
-      semester: req.body.semester,
-      keyword: req.body.keyword,
-    });
-
-    await newFile.save();
-
-    res.status(200).json({ message: 'File uploaded successfully', fileUrl });
-  } catch (error) {
-    console.error('File upload failed:', error);
-    res.status(500).json({ message: 'File upload failed', error });
-  }
-};
-
-const getFiles = async (req, res) => {
-  try {
-    const files = await File.find();
-    res.status(200).json(files);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch files', error });
-  }
-};
-
-module.exports = {
-  uploadFile,
-  getFiles,
-};
+module.exports = { uploadFile, getFiles, getUserFiles };

@@ -7,6 +7,11 @@ const fileSchema = new mongoose.Schema({
   subject: { type: String, required: true },
   semester: { type: String, required: true },
   keyword: { type: String, required: true },
+  user: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true 
+  },
 });
 
 module.exports = mongoose.model('File', fileSchema);

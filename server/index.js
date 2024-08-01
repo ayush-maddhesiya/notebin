@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const cors = require('cors');
-// const userRoute = require('./routes/users');
+const userRoutes = require('./routes/userRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 
 const port = process.env.PORT || 3000;
@@ -35,8 +35,8 @@ app.get('/', (req, res) => {
   res.send('NoteBin Server is running ...');
 });
 
-// app.use('/api/v1/user', userRoute); 
-app.use('/api/v1/api', fileRoutes);
+app.use('/api/v1/user', userRoutes); 
+app.use('/api/v1/file', fileRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

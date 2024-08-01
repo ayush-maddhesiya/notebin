@@ -1,5 +1,5 @@
-const {Schema,model} = require('mongoose');
-const { v4:uuidv4} = require('uuid');
+const { Schema, model, mongoose } = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const userSchema = new Schema({
   userId: {
@@ -7,7 +7,7 @@ const userSchema = new Schema({
     default: uuidv4,
     unique: true,
   },
-  Name: {
+  name: {
     type: String,
     required: true,
   },
@@ -16,12 +16,12 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
-  enrollmentNo:{
+  enrollmentNo: {
     type: String,
     required: true,
     unique: true,
   },
-  mobileNo:{
+  mobileNo: {
     type: String,
     required: true,
     unique: true,
@@ -29,14 +29,12 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
-    // select: false,
   },
-  semester:{
+  semester: {
     type: String,
   },
-},{
-    timestamps: true,
+}, {
+  timestamps: true,
 });
 
-export const User = model("User", userSchema);
-    
+module.exports = mongoose.model("User", userSchema);

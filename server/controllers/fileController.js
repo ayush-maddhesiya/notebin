@@ -1,38 +1,32 @@
-const B2 = require('backblaze-b2');
-const mongoose = require('mongoose');
+const { authorizeB2, getUploadUrl, uploadFileToB2, getAuthorizationToken } = require('../lib/backblaze');
 const File = require('../models/fileModel');
-const multer = require('multer');
-require('dotenv').config();
 
-const b2 = new B2({
-  applicationKeyId: process.env.B2_KEY_ID,
-  applicationKey: process.env.B2_APPLICATION_KEY,
-});
-
+// Upload Files
 const uploadFile = async (req, res) => {
   try {
-    await b2.authorize(); // Authorize with B2
-    const uploadUrlResponse = await b2.getUploadUrl({
-      bucketId: process.env.BUCKET_ID,
-    });
+    await authorizeB2(); // Authorize with B2
+    const uploadUrlResponse = await getUploadUrl();
 
-    const uploadResponse = await b2.uploadFile({
-      uploadUrl: uploadUrlResponse.data.uploadUrl,
-      uploadAuthToken: uploadUrlResponse.data.authorizationToken,
-      fileName: `${Date.now()}_${req.file.originalname}`,
-      data: req.file.buffer,
-    });
+    const fileName = `${Date.now()}_${req.file.originalname}`;
+    const uploadResponse = await uploadFileToB2(
+      uploadUrlResponse.uploadUrl,
+      uploadUrlResponse.authorizationToken,
+      fileName,
+      req.file.buffer
+    );
 
-    const fileUrl = `https://f000.backblazeb2.com/file/${process.env.BUCKET_ID}/${uploadResponse.data.fileName}`;
+    const authorizationToken = await getAuthorizationToken();
 
-    // Save metadata in MongoDB
+    const fileUrl = `https://f000.backblazeb2.com/file/${process.env.BUCKET_NAME}/${fileName}?Authorization=${authorizationToken}`;
+
     const newFile = new File({
       filename: req.file.originalname,
-      fileUrl,
+      fileUrl, // Save the file URL with the authorization token
       title: req.body.title,
       subject: req.body.subject,
       semester: req.body.semester,
       keyword: req.body.keyword,
+      user: req.user._id,
     });
 
     await newFile.save();
@@ -44,16 +38,25 @@ const uploadFile = async (req, res) => {
   }
 };
 
+// Get files
 const getFiles = async (req, res) => {
   try {
-    const files = await File.find();
+    const files = await File.find().populate('user', 'userId name enrollmentNo semester');
     res.status(200).json(files);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch files', error });
   }
 };
 
-module.exports = {
-  uploadFile,
-  getFiles,
+// Get files uploaded by the logged-in user
+const getUserFiles = async (req, res) => {
+  try {
+    const userFiles = await File.find({ user: req.user._id }).populate('user', 'userId name enrollmentNo semester');
+    res.status(200).json(userFiles);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch user files', error });
+  }
 };
+
+
+module.exports = { uploadFile, getFiles,getUserFiles };

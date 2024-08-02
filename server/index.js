@@ -6,6 +6,7 @@ const session = require('express-session');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const fileRoutes = require('./routes/fileRoutes');
+const logRoutes = require('./routes/logRoutes');  
 
 const port = process.env.PORT || 3000;
 
@@ -37,6 +38,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/user', userRoutes); 
 app.use('/api/v1/file', fileRoutes);
+app.use('/api/v1/log', logRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

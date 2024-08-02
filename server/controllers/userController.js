@@ -5,11 +5,19 @@ const TryCatch = require('../middlewares/errorHandler.js');
 
 // Sign up
 const signup = TryCatch(async (req, res) => {
-  const { userId, name,email,enrollmentNo,mobileNo, password,semester} = req.body;
+  const { userId, name, email, enrollmentNo, mobileNo, password, semester } = req.body;
+
   let user = await User.findOne({ email });
   if (user) {
     return res.status(400).json({ msg: "User already exists" });
   }
+
+  user = await User.findOne({ enrollmentNo });
+  if (user) {
+    return res.status(400).json({ msg: "Enrollment number already in use" });
+  }
+
+  // Create a new user
   user = new User({
     userId,
     name,
@@ -24,7 +32,7 @@ const signup = TryCatch(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(password, salt);
 
-  // Saving the user in the database
+  // Save the user in the database
   await user.save();
 
   // Return Jwt
@@ -34,6 +42,7 @@ const signup = TryCatch(async (req, res) => {
       username: user.username,
     },
   };
+
   jwt.sign(
     payload,
     process.env.JWT_SECRET,

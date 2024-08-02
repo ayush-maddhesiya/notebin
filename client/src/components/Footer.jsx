@@ -12,7 +12,7 @@ const Footer = () => {
             <Link href="/">Home</Link>
             <Link href="/notes">Notes</Link>
             <Link href="#">Help</Link>
-            <Link href="#">Contact</Link>
+            <Link href="https://www.linkedin.com/in/mandeepyadav27/" target="_blank">Contact</Link>
             </div>
         </div>
         <div className='text-white flex gap-20 justify-center py-3 border-t border-zinc-300 mx-10'>

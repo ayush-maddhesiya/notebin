@@ -26,7 +26,7 @@ const Navbar = () => {
       <div className='flex gap-8 items-center'>
         <Link href="/">Home</Link>
         <Link href="/notes">Notes</Link>
-        <Link href="/contact">Contact</Link>
+        <Link href="https://www.linkedin.com/in/mandeepyadav27/" target="_blank" >Contact</Link>
         {token ? (
           <button onClick={handleLogout} className='border-white border text-white px-4 py-1 rounded-full hover:bg-white hover:text-[#093A3E]'>Logout</button>
         ) : (

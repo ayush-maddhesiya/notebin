@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 import React, { useState } from 'react';
@@ -7,6 +7,7 @@ import axios from 'axios';
 import { loginStart, loginSuccess, loginFailure } from '../slices/authSlice';
 import { BASE_URL } from '@/constants/data';
 import { useRouter } from 'next/navigation';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Login = () => {
   const router = useRouter();
@@ -30,11 +31,11 @@ const Login = () => {
       const { token, user } = res.data;
       Cookies.set('token', token, { expires: 1 });
       dispatch(loginSuccess({ token, user }));
-      router.push('/'); 
-      alert('User logged in successfully');
+      toast.success('User logged in successfully');
+      router.push('/');
     } catch (err) {
-      dispatch(loginFailure(err));
-      console.log(err)
+      dispatch(loginFailure(err.response.data.msg || 'An error occurred'));
+      toast.error(err.response.data.msg || 'An error occurred');
     }
   };
 
@@ -77,6 +78,7 @@ const Login = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };

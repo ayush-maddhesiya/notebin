@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { uploadFile, getFiles, getUserFiles } = require('../controllers/fileController');
+const { uploadFile, getFiles, getUserFiles, deleteFile } = require('../controllers/fileController');
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
@@ -36,5 +36,8 @@ router.get('/', getFiles);
 
 // Get files by userId
 router.get('/userfiles', authMiddleware, getUserFiles);
+
+// Delete file by note ID
+router.delete('/delete/:id', authMiddleware, deleteFile);
 
 module.exports = router;

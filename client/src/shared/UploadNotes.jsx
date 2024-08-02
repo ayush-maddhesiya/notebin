@@ -59,7 +59,7 @@ const UploadNotes = () => {
   const handleDelete = async (noteId) => {
     try {
       const token = jsCookie.get('token');
-      await axios.delete(`${BASE_URL}api/v1/file/${noteId}`, {
+      await axios.delete(`${BASE_URL}api/v1/file/delete/${noteId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -101,7 +101,7 @@ const UploadNotes = () => {
                       <Link href={note.fileUrl} className="mr-2 hover:underline">
                         <small>Download</small>
                       </Link>
-                      <button onClick={() => handleDelete(note.id)} className="text-red-400 hover:underline">
+                      <button onClick={() => handleDelete(note._id)} className="text-red-400 hover:underline">
                         <small>Delete</small>
                       </button>
                     </div>

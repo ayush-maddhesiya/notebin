@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
@@ -7,6 +7,8 @@ import axios from 'axios';
 import { loginStart, loginSuccess, loginFailure } from '../slices/authSlice';
 import { BASE_URL } from '@/constants/data';
 import { useRouter } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signin = () => {
   const router = useRouter();
@@ -26,24 +28,65 @@ const Signin = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasNumber = /\d/;
+    const hasUpperCase = /[A-Z]/;
+    const hasLowerCase = /[a-z]/;
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
+    if (password.length < minLength) {
+      return "Password must be at least 8 characters long";
+    } else if (!hasNumber.test(password)) {
+      return "Password must contain at least one number";
+    } else if (!hasUpperCase.test(password)) {
+      return "Password must contain at least one uppercase letter";
+    } else if (!hasLowerCase.test(password)) {
+      return "Password must contain at least one lowercase letter";
+    } else if (!hasSpecialChar.test(password)) {
+      return "Password must contain at least one special character";
+    }
+    return null;
+  };
+
+  const validateMobileNumber = (mobileNo) => {
+    const isNumeric = /^\d+$/.test(mobileNo);
+    if (!isNumeric) {
+      return "Mobile number must be numeric";
+    }
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const passwordError = validatePassword(formData.password);
+    const mobileNumberError = validateMobileNumber(formData.mobileNo);
+    if (passwordError) {
+      toast.error(passwordError);
+      return;
+    }
+    if (mobileNumberError) {
+      toast.error(mobileNumberError);
+      return;
+    }
+
     dispatch(loginStart());
     try {
       const res = await axios.post(`${BASE_URL}api/v1/user/signup`, formData);
       const { token, user } = res.data;
       Cookies.set('token', token, { expires: 1 });
       dispatch(loginSuccess({ token, user }));
-      router.push('/'); 
-      alert('User registered successfully');
+      router.push('/');
+      toast.success('User registered successfully');
     } catch (err) {
       dispatch(loginFailure(err.response.data.msg));
-      console.log(err)
+      toast.error(err.response.data.msg || 'An error occurred');
     }
   };
 
   return (
     <>
+      <ToastContainer />
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#093A3E] to-[#0D6E71] py-5">
         <div className="w-full max-w-md shadow-xl py-8 px-8 bg-white rounded-lg">
           <p className='text-sm font-semibold'>Welcome to <span className='text-[#093A3E]'>Abhyudaya Club</span></p>
@@ -89,7 +132,7 @@ const Signin = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default Signin;

@@ -1,15 +1,5 @@
 const initialFilters = [
     {
-      id: "year",
-      name: "Year",
-      options: [
-        { value: "first", label: "First Year", checked: false },
-        { value: "second", label: "Second Year", checked: false },
-        { value: "third", label: "Third Year", checked: false },
-        { value: "fourth", label: "Fourth Year", checked: false },
-      ],
-    },
-    {
       id: "semester",
       name: "Semester",
       options: [

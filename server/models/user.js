@@ -33,6 +33,12 @@ const userSchema = new Schema(
     semester: {
       type: String,
     },
+    otp:{
+      type: String
+    },
+    otpExpires: {
+      type:Date
+    },
   },
   {
     timestamps: true,
